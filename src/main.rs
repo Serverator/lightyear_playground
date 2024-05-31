@@ -1,6 +1,6 @@
 #![allow(clippy::type_complexity)]
 
-use bevy::{prelude::*, window::WindowResolution};
+use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 mod client;
@@ -18,7 +18,6 @@ fn main() {
         DefaultPlugins.set(WindowPlugin { 
             primary_window: Some(Window { 
                 title: String::from(if is_server {"Server"} else {"Client"}),
-                resolution: WindowResolution::new(500.0, 500.0),
                 ..default()
             }),
             ..default()
