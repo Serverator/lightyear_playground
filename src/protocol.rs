@@ -1,28 +1,53 @@
 use bevy::prelude::*;
 use lightyear::prelude::*;
+use rand::Rng;
 use serde::{ Serialize, Deserialize };
 
 pub struct ProtocolPlugin;
 impl Plugin for ProtocolPlugin {
     fn build(&self, app: &mut App) {
-        app.register_component::<CursorPosition>(ChannelDirection::Bidirectional);
-        app.register_component::<Owner>(ChannelDirection::ServerToClient);
+        app.add_message::<VeryLargeMessage>(ChannelDirection::ServerToClient);
+        app.add_message::<GenericMessage<VeryLargeMessage>>(ChannelDirection::ServerToClient);
 
-        app.register_type::<CursorPosition>();
-        app.register_type::<Owner>();
+        app.add_channel::<UnorderedReliableChannel>(ChannelSettings {
+            direction: ChannelDirection::Bidirectional,
+            mode: ChannelMode::UnorderedReliable(ReliableSettings::default()),
+            ..default()
+        });
     }
 }
 
-#[derive(Component, Debug, Reflect, Serialize, Deserialize, Clone, Copy, PartialEq)]
-pub struct Owner(pub ClientId);
+#[derive(Channel)]
+pub struct UnorderedReliableChannel;
 
-#[derive(Component, Debug, Default, Clone, Copy, Reflect, Serialize, Deserialize, PartialEq)]
-pub struct CursorPosition {
-    pub position: Vec2,
+#[derive(Serialize, Deserialize)]
+pub struct GenericMessage<T> {
+    pub other_data: u128,
+    pub data: T,
 }
 
-impl Linear for CursorPosition {
-    fn lerp(start: &Self, other: &Self, t: f32) -> Self {
-        CursorPosition { position: Vec2::lerp(start.position, other.position, t) }
+impl GenericMessage<VeryLargeMessage> {
+    pub fn generate(size: usize) -> Self {
+        let mut rand = rand::thread_rng();
+        let data = VeryLargeMessage::generate(size);
+        let other_data = rand.gen::<u128>();
+
+        GenericMessage {
+            data,
+            other_data,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct VeryLargeMessage {
+    pub data: Vec<u8>,
+}
+
+impl VeryLargeMessage {
+    pub fn generate(size: usize) -> Self {
+        let mut rand = rand::thread_rng();
+        let data = (0..size).map(|_| rand.gen::<u8>()).collect();
+        VeryLargeMessage { data }
     }
 }

@@ -195,12 +195,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anyhow"
-version = "1.0.86"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b3d1d046238990b9cf5bcde22a3fb3584ee5cf65fb2765f454ed428c7a0063da"
-
-[[package]]
 name = "approx"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -310,16 +304,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89b47800b0be77592da0afd425cc03468052844aff33b84e33cc696f64e77b6a"
 dependencies = [
  "concurrent-queue",
- "event-listener-strategy 0.5.2",
+ "event-listener-strategy",
  "futures-core",
  "pin-project-lite",
 ]
 
 [[package]]
 name = "async-compat"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f68a707c1feb095d8c07f8a65b9f506b117d30af431cab89374357de7c11461b"
+checksum = "7bab94bde396a3f7b4962e396fdad640e241ed797d4d8d77fc8c237d14c58fc0"
 dependencies = [
  "futures-core",
  "futures-io",
@@ -354,12 +348,12 @@ dependencies = [
 
 [[package]]
 name = "async-lock"
-version = "3.3.0"
+version = "3.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d034b430882f8381900d3fe6f0aaa3ad94f2cb4ac519b429692a1bc2dda4ae7b"
+checksum = "ff6e472cdea888a4bd64f342f09b3f50e1886d32afe8df3d663c01140b811b18"
 dependencies = [
- "event-listener 4.0.3",
- "event-listener-strategy 0.4.0",
+ "event-listener 5.3.1",
+ "event-listener-strategy",
  "pin-project-lite",
 ]
 
@@ -666,9 +660,9 @@ dependencies = [
 
 [[package]]
 name = "bevy_egui"
-version = "0.27.0"
+version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eac153cb176b04eb0734c60fbc2912aa6fb2539f5b64ba832661c1c4cf9e298a"
+checksum = "b0118223ec165efe20f2e017811539ee1ba1f62b03a878022fbaec9e9bfd56bc"
 dependencies = [
  "arboard",
  "bevy",
@@ -1283,7 +1277,7 @@ dependencies = [
 [[package]]
 name = "bitcode_lightyear_patch"
 version = "0.5.1"
-source = "git+https://github.com/cBournhonesque/lightyear#80f460cdc1ded7f9e85512825b702fb231871d5f"
+source = "git+https://github.com/cBournhonesque/lightyear#2b2f618c1c02751141891116180953b599307814"
 dependencies = [
  "bitcode_derive",
  "bytemuck",
@@ -1690,12 +1684,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "convert_case"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
-
-[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1893,10 +1881,8 @@ version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4fb810d30a7c1953f91334de7244731fc3f3c10d7fe163338a35b9f640960321"
 dependencies = [
- "convert_case",
  "proc-macro2",
  "quote",
- "rustc_version",
  "syn 1.0.109",
 ]
 
@@ -2094,33 +2080,12 @@ checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
 
 [[package]]
 name = "event-listener"
-version = "4.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67b215c49b2b248c855fb73579eb1f4f26c38ffdc12973e20e07b91d78d5646e"
-dependencies = [
- "concurrent-queue",
- "parking",
- "pin-project-lite",
-]
-
-[[package]]
-name = "event-listener"
 version = "5.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6032be9bd27023a771701cc49f9f053c751055f71efb2e0ae5c15809093675ba"
 dependencies = [
  "concurrent-queue",
  "parking",
- "pin-project-lite",
-]
-
-[[package]]
-name = "event-listener-strategy"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "958e4d70b6d5e81971bebec42271ec641e7ff4e170a6fa605f2b8a8b65cb97d3"
-dependencies = [
- "event-listener 4.0.3",
  "pin-project-lite",
 ]
 
@@ -2765,15 +2730,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "instant"
-version = "0.1.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0242819d153cba4b4b05a5a8f2a7e9bbf97b6055b2a002b395c96b5ff3c0222"
-dependencies = [
- "cfg-if",
-]
-
-[[package]]
 name = "io-kit-sys"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2949,12 +2905,10 @@ dependencies = [
 [[package]]
 name = "lightyear"
 version = "0.15.1"
-source = "git+https://github.com/cBournhonesque/lightyear#80f460cdc1ded7f9e85512825b702fb231871d5f"
+source = "git+https://github.com/cBournhonesque/lightyear#2b2f618c1c02751141891116180953b599307814"
 dependencies = [
- "anyhow",
  "async-channel",
  "async-compat",
- "base64 0.22.1",
  "bevy",
  "bevy_web_keepalive",
  "bitcode_lightyear_patch",
@@ -2965,16 +2919,13 @@ dependencies = [
  "chrono",
  "console_error_panic_hook",
  "crossbeam-channel",
- "derive_more",
  "enum_dispatch",
  "futures",
  "getrandom",
  "governor",
  "hashbrown",
- "instant",
  "lightyear_macros",
  "nonzero_ext",
- "once_cell",
  "parking_lot",
  "paste",
  "rand",
@@ -2998,7 +2949,7 @@ dependencies = [
 [[package]]
 name = "lightyear_macros"
 version = "0.15.1"
-source = "git+https://github.com/cBournhonesque/lightyear#80f460cdc1ded7f9e85512825b702fb231871d5f"
+source = "git+https://github.com/cBournhonesque/lightyear#2b2f618c1c02751141891116180953b599307814"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3667,9 +3618,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "piper"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "464db0c665917b13ebb5d453ccdec4add5658ee1adc7affc7677615356a8afaf"
+checksum = "ae1d5c74c9876f070d3e8fd503d748c7d974c3e48da8f41350fa5222ef9b4391"
 dependencies = [
  "atomic-waker",
  "fastrand",
@@ -3697,9 +3648,9 @@ dependencies = [
 
 [[package]]
 name = "polling"
-version = "3.7.0"
+version = "3.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "645493cf344456ef24219d02a768cf1fb92ddf8c92161679ae3d91b91a637be3"
+checksum = "5e6a007746f34ed64099e88783b0ae369eaa3da6392868ba262e2af9b8fbaea1"
 dependencies = [
  "cfg-if",
  "concurrent-queue",
@@ -3771,9 +3722,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.84"
+version = "1.0.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec96c6a92621310b51366f1e28d05ef11489516e93be030060e5fc12024a49d6"
+checksum = "22244ce15aa966053a896d1accb3a6e68469b97c7f33f284b99f0d576879fc23"
 dependencies = [
  "unicode-ident",
 ]
@@ -4101,15 +4052,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 
 [[package]]
-name = "rustc_version"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bfa0f585226d2e68097d4f95d113b15b83a82e819ab25717ec0590d9584ef366"
-dependencies = [
- "semver",
-]
-
-[[package]]
 name = "rusticata-macros"
 version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4294,12 +4236,6 @@ name = "self_cell"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d369a96f978623eb3dc28807c4852d6cc617fed53da5d3c400feff1ef34a714a"
-
-[[package]]
-name = "semver"
-version = "1.0.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61697e0a1c7e512e84a621326239844a24d8207b4669b41bc18b32ea5cbf988b"
 
 [[package]]
 name = "serde"

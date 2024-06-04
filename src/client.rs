@@ -1,8 +1,8 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContext;
 use lightyear::{connection::netcode::PRIVATE_KEY_BYTES, prelude::{client::*, * }};
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-use crate::{protocol::CursorPosition, shared::DEFAULT_PORT};
+use crate::{protocol::{GenericMessage, VeryLargeMessage}, shared::DEFAULT_PORT};
 use rand::Rng;
 use bevy_inspector_egui::egui;
 
@@ -12,19 +12,11 @@ impl Plugin for MyClientPlugin {
 		let config = client_config();
 
         app .add_plugins(ClientPlugins::new(config))
-			.add_systems(Startup, spawn_local_cursor)
-        	.add_systems(Update, (update_local_cursor_position, draw_connection_ui))
+			.add_systems(PreUpdate, recieve_messages.after(MainSet::EmitEvents))
+        	.add_systems(Update, draw_connection_ui)
 			// Connect the client
 			.insert_resource(NextState(Some(NetworkingState::Connecting)));
     }
-}
-
-fn spawn_local_cursor(mut commands: Commands) {
-    commands.spawn((
-        Name::new("Cursor"),
-        CursorPosition::default(),
-        client::Replicate::default(),
-    ));
 }
 
 fn draw_connection_ui(
@@ -59,23 +51,18 @@ fn draw_connection_ui(
 	});
 }
 
-fn update_local_cursor_position(
-    mut local_cursor: Query<&mut CursorPosition, (Without<Replicated>, Without<Confirmed>, Without<Interpolated>)>,
-    camera: Query<(&Camera, &GlobalTransform)>,
-	window: Query<&Window, With<PrimaryWindow>>,
+fn recieve_messages(
+	mut generic_messages: EventReader<MessageEvent<GenericMessage<VeryLargeMessage>>>,
+	mut large_messages: EventReader<MessageEvent<VeryLargeMessage>>,
 ) {
-	let (camera, camera_transform) = camera.single();
-	let window = window.single();
-	let mut cursor = local_cursor.single_mut();
+	for message in generic_messages.read() {
+		info!("Generic message recieved: {:?}...", &message.message.data.data[..10]);
+	}
 
-	if let Some(world_pos) = window
-		.cursor_position()
-		.and_then(|cursor| camera.viewport_to_world_2d(camera_transform, cursor)) 
-	{
-		cursor.set_if_neq(CursorPosition { position: world_pos });
-	};
+	for message in large_messages.read() {
+		info!("Large message recieved: {:?}...", &message.message.data[..10]);
+	}
 }
-
 
 fn client_config() -> ClientConfig {
 	let server_addr =  std::net::SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), DEFAULT_PORT));

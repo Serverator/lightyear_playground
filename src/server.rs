@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use lightyear::prelude::{*, server::* };
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-use crate::{protocol::{CursorPosition, Owner}, shared::DEFAULT_PORT};
+use crate::{protocol::{GenericMessage, UnorderedReliableChannel, VeryLargeMessage}, shared::DEFAULT_PORT};
 
 pub struct MyServerPlugin;
 impl Plugin for MyServerPlugin {
@@ -9,30 +9,24 @@ impl Plugin for MyServerPlugin {
 		let config = server_config();
 
         app.add_plugins(ServerPlugins::new(config))
-           .add_systems(PreUpdate, replicate_cursors.in_set(ServerReplicationSet::ClientReplication))
+           .add_systems(PreUpdate, send_messages_on_connection.after(MainSet::EmitEvents))
 		   // Start the server
 		   .insert_resource(NextState(Some(server::NetworkingState::Started)));
     }
 }
 
-
-fn replicate_cursors(
-    mut commands: Commands,
-    cursors: Query<(Entity, &Replicated), (With<CursorPosition>, Added<Replicated>)>,
+fn send_messages_on_connection(
+    mut connect_events: EventReader<ConnectEvent>,
+    mut connection: ResMut<ConnectionManager>,
 ) {
-    for (entity, replicated) in cursors.iter() {
-        let client_id = replicated.client_id();
-        let mut entity = commands.entity(entity);
+    for connect in connect_events.read() {
+        let message = VeryLargeMessage::generate(1000000);
+        connection.send_message::<UnorderedReliableChannel,_>(connect.client_id, &message).unwrap();
+        info!("Large message sent: {:?}...", &message.data[..10]);
 
-        entity.insert((
-            Owner(client_id),
-            server::Replicate {
-                target: ReplicationTarget {
-                    target: NetworkTarget::All,
-                },
-                ..default()
-            },
-        ));
+        let message = GenericMessage::<VeryLargeMessage>::generate(1000000);
+        connection.send_message::<UnorderedReliableChannel,_>(connect.client_id, &message).unwrap();
+        info!("Genetic message sent: {:?}...", &message.data.data[..10]);
     }
 }
 
