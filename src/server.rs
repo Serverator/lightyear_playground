@@ -20,7 +20,7 @@ fn send_messages_on_connection(
     mut connection: ResMut<ConnectionManager>,
 ) {
     for connect in connect_events.read() {
-        let message = VeryLargeMessage::generate(1000000);
+        let message = VeryLargeMessage::generate(300000);
         connection.send_message::<UnorderedReliableChannel,_>(connect.client_id, &message).unwrap();
         info!("Large message sent: {:?}...", &message.data[..10]);
     }
