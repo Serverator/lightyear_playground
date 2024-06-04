@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContext;
 use lightyear::{connection::netcode::PRIVATE_KEY_BYTES, prelude::{client::*, * }};
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-use crate::{protocol::{GenericMessage, VeryLargeMessage}, shared::DEFAULT_PORT};
+use crate::{protocol::VeryLargeMessage, shared::DEFAULT_PORT};
 use rand::Rng;
 use bevy_inspector_egui::egui;
 
@@ -52,13 +52,8 @@ fn draw_connection_ui(
 }
 
 fn recieve_messages(
-	mut generic_messages: EventReader<MessageEvent<GenericMessage<VeryLargeMessage>>>,
 	mut large_messages: EventReader<MessageEvent<VeryLargeMessage>>,
 ) {
-	for message in generic_messages.read() {
-		info!("Generic message recieved: {:?}...", &message.message.data.data[..10]);
-	}
-
 	for message in large_messages.read() {
 		info!("Large message recieved: {:?}...", &message.message.data[..10]);
 	}

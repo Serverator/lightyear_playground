@@ -7,7 +7,6 @@ pub struct ProtocolPlugin;
 impl Plugin for ProtocolPlugin {
     fn build(&self, app: &mut App) {
         app.add_message::<VeryLargeMessage>(ChannelDirection::ServerToClient);
-        app.add_message::<GenericMessage<VeryLargeMessage>>(ChannelDirection::ServerToClient);
 
         app.add_channel::<UnorderedReliableChannel>(ChannelSettings {
             direction: ChannelDirection::Bidirectional,
@@ -19,25 +18,6 @@ impl Plugin for ProtocolPlugin {
 
 #[derive(Channel)]
 pub struct UnorderedReliableChannel;
-
-#[derive(Serialize, Deserialize)]
-pub struct GenericMessage<T> {
-    pub other_data: u128,
-    pub data: T,
-}
-
-impl GenericMessage<VeryLargeMessage> {
-    pub fn generate(size: usize) -> Self {
-        let mut rand = rand::thread_rng();
-        let data = VeryLargeMessage::generate(size);
-        let other_data = rand.gen::<u128>();
-
-        GenericMessage {
-            data,
-            other_data,
-        }
-    }
-}
 
 #[derive(Serialize, Deserialize)]
 pub struct VeryLargeMessage {

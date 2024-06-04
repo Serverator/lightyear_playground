@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use lightyear::prelude::{*, server::* };
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-use crate::{protocol::{GenericMessage, UnorderedReliableChannel, VeryLargeMessage}, shared::DEFAULT_PORT};
+use crate::{protocol::{UnorderedReliableChannel, VeryLargeMessage}, shared::DEFAULT_PORT};
 
 pub struct MyServerPlugin;
 impl Plugin for MyServerPlugin {
@@ -23,10 +23,6 @@ fn send_messages_on_connection(
         let message = VeryLargeMessage::generate(1000000);
         connection.send_message::<UnorderedReliableChannel,_>(connect.client_id, &message).unwrap();
         info!("Large message sent: {:?}...", &message.data[..10]);
-
-        let message = GenericMessage::<VeryLargeMessage>::generate(1000000);
-        connection.send_message::<UnorderedReliableChannel,_>(connect.client_id, &message).unwrap();
-        info!("Genetic message sent: {:?}...", &message.data.data[..10]);
     }
 }
 
