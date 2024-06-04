@@ -6,7 +6,7 @@ use serde::{ Serialize, Deserialize };
 pub struct ProtocolPlugin;
 impl Plugin for ProtocolPlugin {
     fn build(&self, app: &mut App) {
-        app.add_message::<VeryLargeMessage>(ChannelDirection::ServerToClient);
+        app.add_message::<VeryLargeMessage>(ChannelDirection::Bidirectional);
 
         app.add_channel::<UnorderedReliableChannel>(ChannelSettings {
             direction: ChannelDirection::Bidirectional,

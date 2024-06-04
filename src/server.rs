@@ -9,7 +9,7 @@ impl Plugin for MyServerPlugin {
 		let config = server_config();
 
         app.add_plugins(ServerPlugins::new(config))
-           .add_systems(PreUpdate, send_messages_on_connection.after(MainSet::EmitEvents))
+           .add_systems(PreUpdate, (send_messages_on_connection, recieve_messages).after(MainSet::EmitEvents))
 		   // Start the server
 		   .insert_resource(NextState(Some(server::NetworkingState::Started)));
     }
@@ -22,8 +22,16 @@ fn send_messages_on_connection(
     for connect in connect_events.read() {
         let message = VeryLargeMessage::generate(300000);
         connection.send_message::<UnorderedReliableChannel,_>(connect.client_id, &message).unwrap();
-        info!("Large message sent: {:?}...", &message.data[..10]);
+        info!("Large message sent to client: {:?}...", &message.data[..10]);
     }
+}
+
+fn recieve_messages(
+	mut large_messages: EventReader<MessageEvent<VeryLargeMessage>>,
+) {
+	for message in large_messages.read() {
+		info!("Large message recieved: {:?}...", &message.message.data[..10]);
+	}
 }
 
 fn server_config() -> ServerConfig {

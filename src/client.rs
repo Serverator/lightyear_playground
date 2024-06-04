@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_inspector_egui::bevy_egui::EguiContext;
 use lightyear::{connection::netcode::PRIVATE_KEY_BYTES, prelude::{client::*, * }};
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
-use crate::{protocol::VeryLargeMessage, shared::DEFAULT_PORT};
+use crate::{protocol::{UnorderedReliableChannel, VeryLargeMessage}, shared::DEFAULT_PORT};
 use rand::Rng;
 use bevy_inspector_egui::egui;
 
@@ -14,9 +14,26 @@ impl Plugin for MyClientPlugin {
         app .add_plugins(ClientPlugins::new(config))
 			.add_systems(PreUpdate, recieve_messages.after(MainSet::EmitEvents))
         	.add_systems(Update, draw_connection_ui)
+			.add_systems(OnEnter(NetworkingState::Connected), send_message_on_connection)
 			// Connect the client
 			.insert_resource(NextState(Some(NetworkingState::Connecting)));
     }
+}
+
+fn send_message_on_connection(
+    mut connection: ResMut<ConnectionManager>,
+) {
+    let message = VeryLargeMessage::generate(300000);
+    connection.send_message::<UnorderedReliableChannel,_>(&message).unwrap();
+    info!("Large message sent to server: {:?}...", &message.data[..10]);
+}
+
+fn recieve_messages(
+	mut large_messages: EventReader<MessageEvent<VeryLargeMessage>>,
+) {
+	for message in large_messages.read() {
+		info!("Large message recieved: {:?}...", &message.message.data[..10]);
+	}
 }
 
 fn draw_connection_ui(
@@ -49,14 +66,6 @@ fn draw_connection_ui(
 			}
 		}
 	});
-}
-
-fn recieve_messages(
-	mut large_messages: EventReader<MessageEvent<VeryLargeMessage>>,
-) {
-	for message in large_messages.read() {
-		info!("Large message recieved: {:?}...", &message.message.data[..10]);
-	}
 }
 
 fn client_config() -> ClientConfig {
